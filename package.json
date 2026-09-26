@@ -35,7 +35,7 @@
   "lint-staged": {
     "**/*.{js,jsx}": [
       "npx prettier --write",
-      "npxeslint --fix"
+      "npx eslint --fix"
     ]
   },
   "allowScripts": {
