@@ -19,7 +19,7 @@ function App() {
       </div>
       <div>
         <a href="https://vectorizer.io" target="_blank">
-          <img src={scroogeMcDuck} className="logo McDuck" alt="Scrooge McDuck" />
+          <img src={scroogeMcDuck} width="1000" className="logo McDuck" alt="Scrooge McDuck"  />
         </a>
       </div>
       <h1>CS618 Vite + React + McDuck</h1>
