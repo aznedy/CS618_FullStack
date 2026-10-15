@@ -1,5 +1,7 @@
 import { app } from './app.js'
 import { initDatabase } from './db/init.js'
+import dotenv from 'dotenv'
+dotenv.config()
 
 try {
   await initDatabase()
@@ -7,5 +9,5 @@ try {
   app.listen(PORT)
   console.info(`express server running on http://localhost:${PORT}`)
 } catch (err) {
-  console.error('Error starting the database:', err)
+  console.error('Error connecting to the database:', err)
 }
