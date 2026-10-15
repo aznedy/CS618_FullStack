@@ -123,34 +123,33 @@ describe('listing posts', () => {
     const posts = await listPostsByTag('nodejs')
     expect(posts.length).toBe(1)
   })
+})
 
-  describe('getting a post', () => {
-    test('should return the full post', async () => {
-      const post = await getPostById(createdSamplePosts[0]._id)
-      expect(post.toObject()).toEqual(createdSamplePosts[0].toObject())
-    })
-
-    test('should fail if the id does not exist', async () => {
-      const post = await getPostById('000000000000000000000000')
-      expect(post).toEqual(null)
-    })
+describe('getting a post', () => {
+  test('should return the full post', async () => {
+    const post = await getPostById(createdSamplePosts[0]._id)
+    expect(post.toObject()).toEqual(createdSamplePosts[0].toObject())
   })
+  test('should fail if the id does not exist', async () => {
+    const post = await getPostById('000000000000000000000000')
+    expect(post).toEqual(null)
+  })
+})
 
-  describe('updating posts', () => {
-    test('should update the specified property', async () => {
-      await updatePost(createdSamplePosts[0]._id, {
-        author: 'Test Author',
-      })
-      const updatedPost = await Post.findById(createdSamplePosts[0]._id)
-      expect(updatedPost.author).toEqual('Test Author')
+describe('updating posts', () => {
+  test('should update the specified property', async () => {
+    await updatePost(createdSamplePosts[0]._id, {
+      author: 'Test Author',
     })
-    test('should not update other properties', async () => {
-      await updatePost(createdSamplePosts[0]._id, {
-        author: 'Test Author',
-      })
-      const updatedPost = await Post.findById(createdSamplePosts[0]._id)
-      expect(updatedPost.title).toEqual('Learning NP (nosePicking)')
+    const updatedPost = await Post.findById(createdSamplePosts[0]._id)
+    expect(updatedPost.author).toEqual('Test Author')
+  })
+  test('should not update other properties', async () => {
+    await updatePost(createdSamplePosts[0]._id, {
+      author: 'Test Author',
     })
+    const updatedPost = await Post.findById(createdSamplePosts[0]._id)
+    expect(updatedPost.title).toEqual('Learning NP (nosePicking)')
   })
 
   test('should update the updatedAt timestamp', async () => {
