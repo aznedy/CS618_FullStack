@@ -10,7 +10,9 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "body-parser": "^1.20.2",
     "canvas-confetti": "^1.9.4",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "mongodb": "^6.3.0",
     "mongoose": "^8.0.2",
