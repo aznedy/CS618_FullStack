@@ -1,0 +1,47 @@
+# Probably don't need sudo, but here is how to close an open port from a process that no longer exists. Highly relavent to codespaces over an unstable connextion.
+
+sudo fuser -k 8080/tcp
+
+#
+
+#
+
+# Leture 5.1 -- Containerizing Backend
+
+# Build a docker image from Dockerfile
+
+docker image build -t blog-backend backend/
+
+# Create new docker 'network' - must grok
+
+docker network create blog-net
+
+# New docker mongodb for blog-net
+
+docker run -d --name mongodb --network blog-net mongo:6.0.4
+
+# Docker for something
+
+docker run -it --name backend --network blog-net -e PORT=3001 -e DATABASE_URL=mongodb://mongodb:27017/blog -p 3001:3001 blog-backend
+
+#
+
+#
+
+## Lecture 5.2 -- Containerizing Frontend
+
+# The point of this is to prepare a container that is built, then served with nginx
+
+# Once the prep of the Dockerfile and .dockerignore:
+
+docker build -t blog-frontend .
+
+# Docker command for run frontend...
+
+docker run -it -p 3000:80 blog-frontend
+
+# Docker compose uses a .yml file to define all containers to run with arguments
+
+# Docker compose up starts all containers, arguments
+
+docker compose up
