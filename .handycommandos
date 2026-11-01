@@ -6,6 +6,9 @@ sudo fuser -k 8080/tcp
 
 #
 
+# Get docker logged on user
+docker info | grep Username
+
 # Leture 5.1 -- Containerizing Backend
 
 # Build a docker image from Dockerfile
@@ -45,3 +48,48 @@ docker run -it -p 3000:80 blog-frontend
 # Docker compose up starts all containers, arguments
 
 docker compose up
+
+#### Build, tag then push.  Docker Image for Frontend & Backend ####
+
+docker build --platform linux/amd64 -t blog-frontend .
+
+docker tag blog-frontend aznedy/blog-frontend
+
+docker push aznedy/blog-frontend
+
+cd backend/ 
+
+docker build --platform linux/amd64 -t blog-backend .
+
+docker tag blog-backend aznedy/blog-backend
+
+docker push aznedy/blog-backend
+
+# CI/CD = Continuous Integration / Continuous Delivery (or Deployment)
+
+# CI - Runs automatically on code changes, checks for quality errors, prevents broken code from merging.
+
+# CD - Takes over after code is merged, Builds docker image, Deploys to cloud, Can be auto or manual
+
+# Why CI/CD - Faster releases, Fewer bugs in production, Immediate feedback, Confidence to ship often.
+
+## Configure CI to Automate Testing
+## Why automate testing?
+# Catch Errors early
+# Prevent broken code from merging
+# Save time for reviewers 
+# Improve team confidence
+
+
+# What is Github actions?
+# Built-in CI/CD tools for GitHub
+# Uses YAML workflow files
+# Triggers on push, PR, or schedule
+# Automates tests, builds & more...
+
+## Integrate CI :0
+# greate .github/workflows directory
+# Add workflow file for backend
+# Add workflow file for frontend
+# Verify that tests run on PRs
+
