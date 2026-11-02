@@ -1,4 +1,4 @@
-name: Blog Frontend CI
+name: Blog Backend CI
 on:
   push:
     branches:
@@ -27,4 +27,3 @@ jobs:
         run: npm run lint
       - name: Run tests on backend
         run: npm run test
-        
