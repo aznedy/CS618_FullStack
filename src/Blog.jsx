@@ -19,6 +19,7 @@ export function Blog() {
 
   return (
     <div style={{ padding: 8 }}>
+      <h1> Welcome to the Recipies Blog! </h1>
       <CreatePost />
       <br />
       <hr />
