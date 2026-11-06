@@ -10,6 +10,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "canvas-confetti": "^1.9.4",
     "cors": "^2.8.5",
@@ -48,6 +49,7 @@
   },
   "allowScripts": {
     "esbuild@0.21.5": true,
-    "mongodb-memory-server@9.1.1": true
+    "mongodb-memory-server@9.1.1": true,
+    "bcrypt@5.1.1": true
   }
 }
