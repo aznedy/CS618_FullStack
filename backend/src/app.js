@@ -12,7 +12,9 @@ postRoutes(app)
 userRoutes(app)
 
 app.get('/', (req, res) => {
-  res.send('Hello From Express!')
+  res.send(
+    'Hello From Express!<br> All I want to do is party. <br> All I want to do is trade. <br> All I want to do is make music. <br> All I want to do is make love.',
+  )
 })
 
 export { app }
