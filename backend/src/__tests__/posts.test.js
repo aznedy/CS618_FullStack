@@ -179,4 +179,98 @@ describe('deleting posts', () => {
     const result = await deletePost(testUser._id, '000000000000000000000000')
     expect(result.deletedCount).toEqual(0)
   })
+
+  describe('recipe fields', () => {
+    const eggsBenedict = {
+      title: 'Eggs Benedict',
+      contents: 'Poach the eggs, toast the muffins, stack.',
+      ingredients: [
+        { name: 'eggs', quantity: { amount: 6 }, unit: null },
+        { name: 'Virginia ham', quantity: { amount: 6 }, unit: 'rounds' },
+        { name: 'English muffins', quantity: { amount: 3 }, unit: null },
+      ],
+      imageUrl: 'https://example.com/eggs-benedict.jpg',
+    }
+
+    test('should store ingredients and imageUrl', async () => {
+      const createdPost = await createPost(testUser._id, eggsBenedict)
+      const foundPost = (await Post.findById(createdPost._id)).toObject()
+      expect(foundPost.ingredients).toEqual(eggsBenedict.ingredients)
+      expect(foundPost.imageUrl).toEqual(eggsBenedict.imageUrl)
+    })
+
+    test('should accept an uploaded image path', async () => {
+      const createdPost = await createPost(testUser._id, {
+        title: 'Uploaded',
+        imageUrl: '/api/v1/images/000000000000000000000000',
+      })
+      expect(createdPost.imageUrl).toEqual(
+        '/api/v1/images/000000000000000000000000',
+      )
+    })
+
+    test('should reject an ingredient without a name', async () => {
+      await expect(
+        createPost(testUser._id, {
+          title: 'Bad ingredient',
+          ingredients: [{ quantity: { amount: 1 }, unit: 'cup' }],
+        }),
+      ).rejects.toBeInstanceOf(mongoose.Error.ValidationError)
+    })
+
+    test('should reject a non-http image URL', async () => {
+      await expect(
+        createPost(testUser._id, {
+          title: 'Bad image',
+          imageUrl: 'javascript:alert(1)',
+        }),
+      ).rejects.toBeInstanceOf(mongoose.Error.ValidationError)
+    })
+
+    test('should replace the ingredient list on update', async () => {
+      const createdPost = await createPost(testUser._id, eggsBenedict)
+      const updatedPost = await updatePost(testUser._id, createdPost._id, {
+        ingredients: [{ name: 'eggs', quantity: { amount: 4 }, unit: null }],
+      })
+      expect(updatedPost.toObject().ingredients).toEqual([
+        { name: 'eggs', quantity: { amount: 4 }, unit: null },
+      ])
+      expect(updatedPost.imageUrl).toEqual(eggsBenedict.imageUrl)
+    })
+
+    test('should validate fields on update', async () => {
+      const createdPost = await createPost(testUser._id, eggsBenedict)
+      await expect(
+        updatePost(testUser._id, createdPost._id, { imageUrl: 'ftp://nope' }),
+      ).rejects.toBeInstanceOf(mongoose.Error.ValidationError)
+    })
+  })
+
+  describe('ownership', () => {
+    let otherUser = null
+
+    beforeAll(async () => {
+      otherUser = await createUser({ username: 'mallory', password: 'hunter3' })
+    })
+
+    test('another user cannot update the post', async () => {
+      const result = await updatePost(
+        otherUser._id,
+        createdSamplePosts[0]._id,
+        {
+          title: 'Hijacked',
+        },
+      )
+      expect(result).toEqual(null)
+      const post = await Post.findById(createdSamplePosts[0]._id)
+      expect(post.title).toEqual('Learning Redux')
+    })
+
+    test('another user cannot delete the post', async () => {
+      const result = await deletePost(otherUser._id, createdSamplePosts[0]._id)
+      expect(result.deletedCount).toEqual(0)
+      const post = await Post.findById(createdSamplePosts[0]._id)
+      expect(post).not.toEqual(null)
+    })
+  })
 })

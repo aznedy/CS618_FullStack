@@ -48,6 +48,9 @@ export function postsRoutes(app) {
       const post = await createPost(req.auth.sub, req.body)
       return res.json(post)
     } catch (err) {
+      if (err.name === 'ValidationError') {
+        return res.status(400).json({ error: err.message })
+      }
       console.error('error creating post', err)
       return res.status(500).end()
     }
@@ -56,8 +59,12 @@ export function postsRoutes(app) {
   app.patch('/api/v1/posts/:id', requireAuth, async (req, res) => {
     try {
       const post = await updatePost(req.auth.sub, req.params.id, req.body)
+      if (post === null) return res.status(404).end()
       return res.json(post)
     } catch (err) {
+      if (err.name === 'ValidationError') {
+        return res.status(400).json({ error: err.message })
+      }
       console.error('error updating post', err)
       return res.status(500).end()
     }

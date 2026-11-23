@@ -21,7 +21,7 @@ function validateImageUrl(value) {
   return (
     value.startsWith('http://') ||
     value.startsWith('https://') ||
-    value.startsWith('api/v1/images/')
+    value.startsWith('/api/v1/images/')
   )
 }
 
