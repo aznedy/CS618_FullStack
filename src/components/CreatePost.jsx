@@ -1,57 +1,40 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createPost } from '../api/posts.js'
 import { useAuth } from '../contexts/AuthContext.jsx'
+import { PostForm } from './PostForm.jsx'
 
 export function CreatePost() {
   const [token] = useAuth()
-
-  const [title, setTitle] = useState('')
-  const [contents, setContents] = useState('')
+  // Changing the key remounts PostForm, which resets it to empty.
+  const [formKey, setFormKey] = useState(0)
 
   const queryClient = useQueryClient()
   const createPostMutation = useMutation({
-    mutationFn: () => createPost(token, { title, contents }),
-    onSuccess: () => queryClient.invalidateQueries(['posts']),
+    mutationFn: (post) => createPost(token, post),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      setFormKey((key) => key + 1)
+    },
   })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    createPostMutation.mutate()
-  }
-
-  if (!token) return <div>Please log in to create new posts.</div>
+  if (!token) return <div>Please log in to create new recipes.</div>
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor='create-title'>Title: </label>
-        <input
-          type='text'
-          name='create-title'
-          id='create-title'
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-      <br />
-      <textarea
-        value={contents}
-        onChange={(e) => setContents(e.target.value)}
+    <div>
+      <h2>Add a recipe</h2>
+      <PostForm
+        key={formKey}
+        idPrefix='create'
+        submitLabel='Create'
+        pendingLabel='Creating...'
+        isPending={createPostMutation.isPending}
+        onSubmit={(post) => createPostMutation.mutate(post)}
       />
-      <br />
-      <br />
-      <input
-        type='submit'
-        value={createPostMutation.isPending ? 'Creating...' : 'Create'}
-        disabled={!title || createPostMutation.isPending}
-      />
-      {createPostMutation.isSuccess ? (
-        <>
-          <br />
-          Post created successfully!
-        </>
-      ) : null}
-    </form>
+      {createPostMutation.isSuccess && <div>Recipe created successfully!</div>}
+      {createPostMutation.isError && (
+        <div className='form-error'>{createPostMutation.error.message}</div>
+      )}
+    </div>
   )
 }
