@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createPost } from '../api/posts.js'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import { PostForm } from './PostForm.jsx'
+import { Link } from 'react-router-dom'
 
 export function CreatePost() {
   const [token] = useAuth()
@@ -31,7 +32,12 @@ export function CreatePost() {
         isPending={createPostMutation.isPending}
         onSubmit={(post) => createPostMutation.mutate(post)}
       />
-      {createPostMutation.isSuccess && <div>Recipe created successfully!</div>}
+      {createPostMutation.isSuccess && (
+        <div>
+          Recipe created successfully!{' '}
+          <Link to={`/posts/${createPostMutation.data._id}`}>View recipe</Link>
+        </div>
+      )}
       {createPostMutation.isError && (
         <div className='form-error'>{createPostMutation.error.message}</div>
       )}
